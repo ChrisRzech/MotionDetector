@@ -5,12 +5,34 @@
 //Speed of the clock. If hardware clock is changed, change this accordingly.
 #define F_CPU 8'000'000
 
+enum Bit : uint8_t {_0, _1, _2, _3, _4, _5, _6, _7, ALL};
+
+constexpr uint8_t convertBitsToBitfield()
+{
+    return 0;
+}
+
+template<typename Head, typename... Tail>
+constexpr uint8_t convertBitsToBitfield(Head head, Tail... tail)
+{
+    if(head == Bit::ALL)
+    {
+        return UINT8_MAX;
+    }
+    else
+    {
+        if(sizeof...(tail) == 0)
+            return (1 << head);
+        else
+            return (1 << head) | convertBitsToBitfield(tail...);
+    }
+}
+
 /* In ATMega32, registers are 8-bit. */
 class Register
 {
 public:
     using RegType = volatile uint8_t;
-    enum Bit : uint8_t {_0, _1, _2, _3, _4, _5, _6, _7, ALL};
 
     Register() = default;
     Register(RegType& reg)
@@ -39,49 +61,31 @@ public:
     template<typename... Bits>
     void set(Bits... bits) const
     {
-        *m_reg = orIntoOne(bits...);
+        *m_reg = convertBitsToBitfield(bits...);
     }
     
     //Set individual bits
     template<typename... Bits>
     void setBits(Bits... bits) const
     {
-        *m_reg |= orIntoOne(bits...);
+        *m_reg |= convertBitsToBitfield(bits...);
     }
     
     //Clear individual bits
     template<typename... Bits>
     void clearBits(Bits... bits) const
     {
-        *m_reg &= ~orIntoOne(bits...);
+        *m_reg &= ~convertBitsToBitfield(bits...);
     }
     
     //Get individual bit values (to get the value of a specific bit, mask the result)
     template<typename... Bits>
     uint8_t getBits(Bits... bits) const
     {
-        return *m_reg & orIntoOne(bits...);
+        return *m_reg & convertBitsToBitfield(bits...);
     }
 
 private:
-    template<typename Bit>
-    uint8_t orIntoOneHelper(Bit bit) const
-    {
-        return (bit == Register::Bit::ALL ? UINT8_MAX : 1 << bit);
-    }
-
-    template<typename Bit, typename... Bits>
-    uint8_t orIntoOneHelper(Bit bit, Bits... bits) const
-    {
-        return (1 << bit) | orIntoOneHelper(bits...);
-    }
-
-    template<typename... Bits>
-    uint8_t orIntoOne(Bits... bits) const
-    {
-        return orIntoOneHelper(bits...);
-    }
-
     RegType* m_reg = nullptr;
 };
 
@@ -89,7 +93,7 @@ private:
 class Port
 {
 public:
-    using Pin = Register::Bit;
+    using Pin = Bit;
     enum class Letter {A, B, C, D}; //Ports supported by ATMega32
 
     Port(Letter letter)
