@@ -190,5 +190,4 @@ extern Port portB;
 extern Port portC;
 extern Port portD;
 
-//Uses TCNT0, which is a 8-bit resolution timer/counter
 void waitMs(uint16_t milliseconds);

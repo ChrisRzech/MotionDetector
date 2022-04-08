@@ -7,18 +7,16 @@ Port portD(Port::Letter::D);
 
 void waitMs(uint16_t milliseconds)
 {
-    Register timer(TCNT0);
-    Register timerControl(TCCR0);
-    Register timerInterrupt(TIFR);
+    Register counter(TCNT0);
+    Register control(TCCR0);
+    Register interrupt(TIFR);
     
-    timerControl.set(CS00, CS01);
-    
-    while(milliseconds-- > 0)
+    for(; milliseconds > 0; milliseconds--)
     {
-        timer.setValue(256 - (F_CPU / 64) * 0.001);
-        timerInterrupt.set(TOV0);
-        while(!timerInterrupt.getBits(TOV0));
+        counter.setValue(UINT8_MAX + 1 - (F_CPU / 64) * 0.001); //Set counter initial value
+        control.setBits(CS00, CS01); //64 prescaler (counter increments every 8 microseconds)
+        while(!interrupt.getBits(TOV0)); //Wait for overflow
+        control.clearBits(CS00, CS01); //Stop (no clock source)
+        interrupt.setBits(TOV0); //Clear overflow flag
     }
-    
-    timerControl.clear();
 }
