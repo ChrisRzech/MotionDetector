@@ -190,4 +190,5 @@ extern Port portB;
 extern Port portC;
 extern Port portD;
 
-void waitMs(uint16_t milliseconds);
+void waitMs(uint16_t milliseconds); //Wait function with a maximum delay of 8388 milliseconds
+void waitUs(uint16_t microseconds); //Wait function with a maximum delay of 65535 microseconds

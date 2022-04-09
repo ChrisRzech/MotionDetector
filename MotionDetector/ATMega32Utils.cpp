@@ -7,16 +7,36 @@ Port portD(Port::Letter::D);
 
 void waitMs(uint16_t milliseconds)
 {
-    Register counter(TCNT0);
-    Register control(TCCR0);
-    Register interrupt(TIFR);
+    Register counterH(TCNT1H);
+    Register counterL(TCNT1L);
+    Register control(TCCR1B);
+    Register flags(TIFR);
     
-    for(; milliseconds > 0; milliseconds--)
-    {
-        counter.setValue(UINT8_MAX + 1 - (F_CPU / 64) * 0.001); //Set counter initial value
-        control.setBits(CS00, CS01); //64 prescaler (counter increments every 8 microseconds)
-        while(!interrupt.getBits(TOV0)); //Wait for overflow
-        control.clearBits(CS00, CS01); //Stop (no clock source)
-        interrupt.setBits(TOV0); //Clear overflow flag
-    }
+    //Set how many counter ticks until desired elapsed time
+    uint16_t value = UINT16_MAX + 1 - (F_CPU / (1024 * 1'000.f) * milliseconds);
+    counterH.setValue((value & 0xFF00) >> 8);
+    counterL.setValue(value & 0xFF);
+    
+    control.setBits(CS10, CS12); //1024 prescaler (counter increments every 8 microseconds)
+    while(flags.getBits(TOV1) == 0); //Wait for overflow
+    control.clearBits(CS10, CS11, CS12); //Stop (no clock source)
+    flags.setBits(TOV1); //Clear overflow flag
+}
+
+void waitUs(uint16_t microseconds)
+{
+    Register counterH(TCNT1H);
+    Register counterL(TCNT1L);
+    Register control(TCCR1B);
+    Register flags(TIFR);
+    
+    //Set how many counter ticks until desired elapsed time
+    uint16_t value = UINT16_MAX + 1 - (F_CPU / (8 * 1'000'000.f) * microseconds);
+    counterH.setValue((value & 0xFF00) >> 8);
+    counterL.setValue(value & 0xFF);
+    
+    control.setBits(CS11); //8 prescaler (counter increments every microsecond)
+    while(flags.getBits(TOV1) == 0); //Wait for overflow
+    control.clearBits(CS10, CS11, CS12); //Stop (no clock source)
+    flags.setBits(TOV1); //Clear overflow flag
 }
