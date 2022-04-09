@@ -22,7 +22,7 @@ constexpr uint8_t convertBitsToBitfield(Head head, Tail... tail)
     else
     {
         if(sizeof...(tail) == 0)
-            return (1 << head);
+            return 1 << head;
         else
             return (1 << head) | convertBitsToBitfield(tail...);
     }
