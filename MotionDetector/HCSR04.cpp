@@ -56,5 +56,5 @@ uint16_t HCSR04::convert(uint16_t time) const
 {
     //NOTE Device documentation says dividing time in microseconds by this value will give distance in centimeters
     uint16_t dist = time / conversionScalar;
-    return (dist >= HCSR04::minDistance && dist <= HCSR04::maxDistance) ? dist : UINT16_MAX;
+    return (dist >= minDistance && dist <= maxDistance) ? dist : UINT16_MAX;
 }
