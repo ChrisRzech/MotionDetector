@@ -5,6 +5,8 @@
 //Speed of the clock. If hardware clock is changed, change this accordingly.
 #define F_CPU 8'000'000
 
+enum Bit : uint8_t {_0, _1, _2, _3, _4, _5, _6, _7, ALL};
+
 template<typename ResultType>
 constexpr ResultType convertBitsToBitfield()
 {
@@ -14,7 +16,9 @@ constexpr ResultType convertBitsToBitfield()
 template<typename ResultType, typename Head, typename... Tail>
 constexpr ResultType convertBitsToBitfield(Head head, Tail... tail)
 {
-    if(sizeof...(tail) == 0)
+    if(head == Bit::ALL)
+        return -1;
+    else if(sizeof...(tail) == 0)
         return 1 << head;
     else
         return (1 << head) | convertBitsToBitfield<ResultType>(tail...);
@@ -86,7 +90,7 @@ using Register16 = Register<uint16_t>;
 class Port
 {
 public:
-    enum Pin {_0, _1, _2, _3, _4, _5, _6, _7, ALL};
+    using Pin = Bit;
     enum class Letter {A, B, C, D}; //Ports supported by ATMega32
 
     Port(Letter letter)
