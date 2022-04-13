@@ -5,48 +5,38 @@
 //Speed of the clock. If hardware clock is changed, change this accordingly.
 #define F_CPU 8'000'000
 
-enum Bit : uint8_t {_0, _1, _2, _3, _4, _5, _6, _7, ALL};
-
-constexpr uint8_t convertBitsToBitfield()
+template<typename ResultType>
+constexpr ResultType convertBitsToBitfield()
 {
     return 0;
 }
 
-template<typename Head, typename... Tail>
-constexpr uint8_t convertBitsToBitfield(Head head, Tail... tail)
+template<typename ResultType, typename Head, typename... Tail>
+constexpr ResultType convertBitsToBitfield(Head head, Tail... tail)
 {
-    if(head == Bit::ALL)
-    {
-        return UINT8_MAX;
-    }
+    if(sizeof...(tail) == 0)
+        return 1 << head;
     else
-    {
-        if(sizeof...(tail) == 0)
-            return 1 << head;
-        else
-            return (1 << head) | convertBitsToBitfield(tail...);
-    }
+        return (1 << head) | convertBitsToBitfield<ResultType>(tail...);
 }
 
-/* In ATMega32, registers are 8-bit. */
+template<typename RegType>
 class Register
 {
 public:
-    using RegType = volatile uint8_t;
-
     Register() = default;
-    Register(RegType& reg)
+    Register(volatile RegType& reg)
         : m_reg{&reg}
     {}
     
     //Set the value
-    void setValue(uint8_t value) const
+    void setValue(RegType value) const
     {
         *m_reg = value;
     }
     
     //Get the value
-    uint8_t getValue() const
+    RegType getValue() const
     {
         return *m_reg;
     }
@@ -61,39 +51,42 @@ public:
     template<typename... Bits>
     void set(Bits... bits) const
     {
-        *m_reg = convertBitsToBitfield(bits...);
+        *m_reg = convertBitsToBitfield<RegType>(bits...);
     }
     
     //Set individual bits
     template<typename... Bits>
     void setBits(Bits... bits) const
     {
-        *m_reg |= convertBitsToBitfield(bits...);
+        *m_reg |= convertBitsToBitfield<RegType>(bits...);
+    }
+    
+    //Get individual bit values (to get the value of a specific bit, mask the result)
+    template<typename... Bits>
+    RegType getBits(Bits... bits) const
+    {
+        return *m_reg & convertBitsToBitfield<RegType>(bits...);
     }
     
     //Clear individual bits
     template<typename... Bits>
     void clearBits(Bits... bits) const
     {
-        *m_reg &= ~convertBitsToBitfield(bits...);
-    }
-    
-    //Get individual bit values (to get the value of a specific bit, mask the result)
-    template<typename... Bits>
-    uint8_t getBits(Bits... bits) const
-    {
-        return *m_reg & convertBitsToBitfield(bits...);
+        *m_reg &= ~convertBitsToBitfield<RegType>(bits...);
     }
 
 private:
-    RegType* m_reg = nullptr;
+    volatile RegType* m_reg = nullptr;
 };
+
+using Register8 = Register<uint8_t>;
+using Register16 = Register<uint16_t>;
 
 /* A port is a I/O represented as physical pins on the device. For the ATMega32, there are 4 ports. */
 class Port
 {
 public:
-    using Pin = Bit;
+    enum Pin {_0, _1, _2, _3, _4, _5, _6, _7, ALL};
     enum class Letter {A, B, C, D}; //Ports supported by ATMega32
 
     Port(Letter letter)
@@ -180,9 +173,9 @@ public:
     }
 
 private:
-    Register m_ddrReg;
-    Register m_portReg;
-    Register m_pinReg;
+    Register8 m_ddrReg;
+    Register8 m_portReg;
+    Register8 m_pinReg;
 };
 
 extern Port portA;

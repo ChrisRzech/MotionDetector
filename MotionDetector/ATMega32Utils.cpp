@@ -7,10 +7,10 @@ Port portD(Port::Letter::D);
 
 void waitMs(uint16_t milliseconds)
 {
-    Register counterH(TCNT1H);
-    Register counterL(TCNT1L);
-    Register control(TCCR1B);
-    Register flags(TIFR);
+    Register8 counterH(TCNT1H);
+    Register8 counterL(TCNT1L);
+    Register8 control(TCCR1B);
+    Register8 flags(TIFR);
     
     //Set how many counter ticks until desired elapsed time
     uint16_t value = UINT16_MAX + 1 - (F_CPU / (1024 * 1'000.f) * milliseconds);
@@ -25,10 +25,10 @@ void waitMs(uint16_t milliseconds)
 
 void waitUs(uint16_t microseconds)
 {
-    Register counterH(TCNT1H);
-    Register counterL(TCNT1L);
-    Register control(TCCR1B);
-    Register flags(TIFR);
+    Register8 counterH(TCNT1H);
+    Register8 counterL(TCNT1L);
+    Register8 control(TCCR1B);
+    Register8 flags(TIFR);
     
     //Set how many counter ticks until desired elapsed time
     uint16_t value = UINT16_MAX + 1 - (F_CPU / (8 * 1'000'000.f) * microseconds);

@@ -19,10 +19,10 @@ uint16_t HCSR04::ping() const
     waitUs(10);
     m_port.setPinsLow(m_triggerPin);
     
-    Register counterH(TCNT1H);
-    Register counterL(TCNT1L);
-    Register control(TCCR1B);
-    Register flags(TIFR);
+    Register8 counterH(TCNT1H);
+    Register8 counterL(TCNT1L);
+    Register8 control(TCCR1B);
+    Register8 flags(TIFR);
     
     //The device has a maximum distance, thus there is a maximum time
     static constexpr uint16_t maxTime = maxDistance * conversionScalar;
