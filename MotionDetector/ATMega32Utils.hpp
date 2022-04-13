@@ -93,43 +93,9 @@ public:
     using Pin = Bit;
     enum class Letter {A, B, C, D}; //Ports supported by ATMega32
 
-    Port(Letter letter)
-    {
-        switch(letter)
-        {
-            case Port::Letter::A:
-            {
-                m_ddrReg = DDRA;
-                m_portReg = PORTA;
-                m_pinReg = PINA;
-                break;
-            }
-            
-            case Port::Letter::B:
-            {
-                m_ddrReg = DDRB;
-                m_portReg = PORTB;
-                m_pinReg = PINB;
-                break;
-            }
-            
-            case Port::Letter::C:
-            {
-                m_ddrReg = DDRC;
-                m_portReg = PORTC;
-                m_pinReg = PINC;
-                break;
-            }
-            
-            case Port::Letter::D:
-            {
-                m_ddrReg = DDRD;
-                m_portReg = PORTD;
-                m_pinReg = PIND;
-                break;
-            }
-        }
-    }
+    Port(Register8 ddr, Register8 port, Register8 pin)
+        : m_ddrReg{ddr}, m_portReg{port}, m_pinReg{pin}
+    {}
     
     template<typename... Pins>
     void setPinsInput(Pins... pins) const

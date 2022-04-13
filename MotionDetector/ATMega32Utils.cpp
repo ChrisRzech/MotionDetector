@@ -1,9 +1,9 @@
 #include "ATMega32Utils.hpp"
 
-Port portA(Port::Letter::A);
-Port portB(Port::Letter::B);
-Port portC(Port::Letter::C);
-Port portD(Port::Letter::D);
+Port portA(DDRA, PORTA, PINA);
+Port portB(DDRB, PORTB, PINB);
+Port portC(DDRC, PORTC, PINC);
+Port portD(DDRD, PORTD, PIND);
 
 void waitMs(uint16_t milliseconds)
 {
