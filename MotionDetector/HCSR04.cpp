@@ -19,8 +19,7 @@ uint16_t HCSR04::ping() const
     waitUs(10);
     m_port.setPinsLow(m_triggerPin);
     
-    Register8 counterH(TCNT1H);
-    Register8 counterL(TCNT1L);
+    Register16 counter(TCNT1);
     Register8 control(TCCR1B);
     Register8 flags(TIFR);
     
@@ -29,8 +28,7 @@ uint16_t HCSR04::ping() const
     static constexpr uint16_t timeoutValue = UINT16_MAX + 1 - maxTime;
     
     //Wait for ultrasonic bursts to come back. It is possible that they don't come back, so wait for a certain amount of time.
-    counterH.setValue((timeoutValue & 0xFF00) >> 8);
-    counterL.setValue(timeoutValue & 0xFF);
+    counter.setValue(timeoutValue);
     control.setBits(CS11); //8 prescaler (counter increments every microsecond)
     while(!m_port.getPin(m_echoPin) && flags.getBits(TOV1) == 0); //Wait until echo pin is high or for overflow (timeout)
     control.clearBits(CS10, CS11, CS12); //Stop (no clock source)
@@ -41,8 +39,7 @@ uint16_t HCSR04::ping() const
         return UINT16_MAX;
     
     //Count duration of high echo pin
-    counterH.setValue((timeoutValue & 0xFF00) >> 8);
-    counterL.setValue(timeoutValue & 0xFF);
+    counter.setValue(timeoutValue);
     control.setBits(CS11); //8 prescaler (counter increments every microsecond)
     while(m_port.getPin(m_echoPin) && flags.getBits(TOV1) == 0); //Wait until echo pin is low or for overflow (timeout)
     control.clearBits(CS10, CS11, CS12); //Stop (no clock source)
