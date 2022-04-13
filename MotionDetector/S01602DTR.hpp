@@ -4,8 +4,8 @@
 class S01602DTR
 {
 public:
-    static const uint8_t width = 16;
-    static const uint8_t height = 2;
+    static constexpr uint8_t width = 16;
+    static constexpr uint8_t height = 2;
 
     S01602DTR(const Port& data, const Port& control, Port::Pin registerSelect, Port::Pin readWrite, Port::Pin enable);
     
