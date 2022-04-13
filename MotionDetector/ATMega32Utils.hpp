@@ -28,59 +28,58 @@ template<typename RegType>
 class Register
 {
 public:
-    Register() = default;
     Register(volatile RegType& reg)
-        : m_reg{&reg}
+        : m_reg{reg}
     {}
     
     //Set the value
     void setValue(RegType value) const
     {
-        *m_reg = value;
+        m_reg = value;
     }
     
     //Get the value
     RegType getValue() const
     {
-        return *m_reg;
+        return m_reg;
     }
     
     //Clear all bits
     void clear() const
     {
-        *m_reg = 0;
+        m_reg = 0;
     }
     
     //Set the value given bits, unspecified bits are cleared
     template<typename... Bits>
     void set(Bits... bits) const
     {
-        *m_reg = convertBitsToBitfield<RegType>(bits...);
+        m_reg = convertBitsToBitfield<RegType>(bits...);
     }
     
     //Set individual bits
     template<typename... Bits>
     void setBits(Bits... bits) const
     {
-        *m_reg |= convertBitsToBitfield<RegType>(bits...);
+        m_reg |= convertBitsToBitfield<RegType>(bits...);
     }
     
     //Get individual bit values (to get the value of a specific bit, mask the result)
     template<typename... Bits>
     RegType getBits(Bits... bits) const
     {
-        return *m_reg & convertBitsToBitfield<RegType>(bits...);
+        return m_reg & convertBitsToBitfield<RegType>(bits...);
     }
     
     //Clear individual bits
     template<typename... Bits>
     void clearBits(Bits... bits) const
     {
-        *m_reg &= ~convertBitsToBitfield<RegType>(bits...);
+        m_reg &= ~convertBitsToBitfield<RegType>(bits...);
     }
 
 private:
-    volatile RegType* m_reg = nullptr;
+    volatile RegType& m_reg;
 };
 
 using Register8 = Register<uint8_t>;
@@ -91,7 +90,6 @@ class Port
 {
 public:
     using Pin = Bit;
-    enum class Letter {A, B, C, D}; //Ports supported by ATMega32
 
     Port(Register8 ddr, Register8 port, Register8 pin)
         : m_ddrReg{ddr}, m_portReg{port}, m_pinReg{pin}
