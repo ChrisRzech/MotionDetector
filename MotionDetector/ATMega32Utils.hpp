@@ -5,7 +5,7 @@
 //Speed of the clock. If hardware clock is changed, change this accordingly.
 #define F_CPU 8'000'000
 
-enum Bit : uint8_t {_0, _1, _2, _3, _4, _5, _6, _7, ALL};
+enum Bit : uint8_t {_0, _1, _2, _3, _4, _5, _6, _7, _8, _9, _10, _11, _12, _13, _14, _15, ALL};
 
 template<typename ResultType>
 constexpr ResultType convertBitsToBitfield()
