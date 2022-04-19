@@ -9,7 +9,7 @@ public:
 
     HCSR04(const Port&, Port::Pin trigger, Port::Pin echo);
     
-    uint16_t getDistance() const; //Centimeter
+    uint16_t getDistance() const; //Centimeter, NOTE allow 60ms between consecutive calls
     
 private:
     uint16_t ping() const; //Microsecond
