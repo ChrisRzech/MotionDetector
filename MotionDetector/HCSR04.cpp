@@ -36,14 +36,14 @@ uint16_t HCSR04::ping() const
     
     //Echo pin never came back
     if(flags.getBits(TOV1) != 0)
-        return UINT16_MAX;
+        return error;
     
     //Count duration of high echo pin
     counter.setValue(timeoutValue);
     control.setBits(CS11); //8 prescaler (counter increments every microsecond)
     while(m_port.getPin(m_echoPin) && flags.getBits(TOV1) == 0); //Wait until echo pin is low or for overflow (timeout)
     control.clearBits(CS10, CS11, CS12); //Stop (no clock source)
-    uint16_t time = (flags.getBits(TOV1) == 0 ? TCNT1 - timeoutValue : UINT16_MAX);
+    uint16_t time = (flags.getBits(TOV1) == 0 ? TCNT1 - timeoutValue : error);
     flags.setBits(TOV1); //Clear overflow flag after reading counter
     
     return time;
@@ -53,5 +53,5 @@ uint16_t HCSR04::convert(uint16_t time) const
 {
     //NOTE Device documentation says dividing time in microseconds by this value will give distance in centimeters
     uint16_t dist = time / conversionScalar;
-    return (dist >= minDistance && dist <= maxDistance) ? dist : UINT16_MAX;
+    return (dist >= minDistance && dist <= maxDistance) ? dist : error;
 }

@@ -6,6 +6,7 @@ class HCSR04
 public:
     static constexpr uint16_t minDistance = 2; //Centimeter
     static constexpr uint16_t maxDistance = 400; //Centimeter
+    static constexpr uint16_t error = UINT16_MAX;
 
     HCSR04(const Port&, Port::Pin trigger, Port::Pin echo);
     

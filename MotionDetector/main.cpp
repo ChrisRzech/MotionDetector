@@ -20,7 +20,7 @@ uint16_t getDistance(const HCSR04& sonar)
     do
     {
         distance = sonar.getDistance();
-    } while(distance == UINT16_MAX);
+    } while(distance == HCSR04::error);
     return distance;
 }
 
