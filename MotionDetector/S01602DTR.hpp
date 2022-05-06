@@ -1,5 +1,5 @@
 #pragma once
-#include "ATMega32Utils.hpp"
+#include "ATmega32Utils.hpp"
 
 class S01602DTR
 {

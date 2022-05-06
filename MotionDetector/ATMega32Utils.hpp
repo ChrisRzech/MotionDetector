@@ -85,7 +85,7 @@ private:
 using Register8 = Register<uint8_t>;
 using Register16 = Register<uint16_t>;
 
-/* A port is a I/O represented as physical pins on the device. For the ATMega32, there are 4 ports. */
+/* A port is a I/O represented as physical pins on the device. For the ATmega32, there are 4 ports. */
 class Port
 {
 public:

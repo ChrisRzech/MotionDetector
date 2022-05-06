@@ -1,5 +1,5 @@
 #pragma once
-#include "ATMega32Utils.hpp"
+#include "ATmega32Utils.hpp"
 
 //NOTE Exact part is unknown, no or inaccurate documentation
 class Speaker

@@ -1,4 +1,4 @@
-#include "ATMega32Utils.hpp"
+#include "ATmega32Utils.hpp"
 
 Port portA(DDRA, PORTA, PINA);
 Port portB(DDRB, PORTB, PINB);
