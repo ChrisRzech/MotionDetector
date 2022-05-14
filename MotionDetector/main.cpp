@@ -40,6 +40,11 @@ uint16_t calibrate(const HCSR04& sonar, uint16_t duration)
     return sum / sampleCount;
 }
 
+bool inRange(uint16_t value, uint16_t low, uint16_t high)
+{
+    return value >= low && value <= high;
+}
+
 int main()
 {
     S01602DTR lcd(portD, portB, Port::Pin::_0, Port::Pin::_1, Port::Pin::_2);
@@ -48,7 +53,9 @@ int main()
     
     lcd << "Calibrating...";
     uint16_t calibratedDistance = calibrate(sonar, 1000);
-    constexpr uint16_t deviation = 10;
+    constexpr uint16_t calibrationDeviation = 10;
+    uint16_t lowCalibrationDistance = calibratedDistance - calibrationDeviation;
+    uint16_t highCalibrationDistance = calibratedDistance + calibrationDeviation;
 
     lcd.clear();
     lcd << "Cali: ";
@@ -62,10 +69,9 @@ int main()
         lcd << "Dist: ";
         printDistance(lcd, distance);
         
-        //Motion detected when distance is outside of deviation range
-        if(distance < calibratedDistance - deviation || distance > calibratedDistance + deviation)
-            speaker.emit(1000, 50);
-        
-        waitMs(g_sonarDelay);
+        if(inRange(distance, lowCalibrationDistance, highCalibrationDistance))
+            waitMs(g_sonarDelay);
+        else
+            speaker.emit(1000, g_sonarDelay);
     }
 }
