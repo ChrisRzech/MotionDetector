@@ -14,7 +14,8 @@ $ git clone https://github.com/ChrisRzech/MotionDetector.git
 Please refer to the schematic file under the `docs` directory.
 
 ## Flashing device
-1. Connect programmer to microcontroller ![Programmer to microcontroller connection](.github/programmer_microcontroller_connection.png)
+1. Connect programmer to microcontroller (please refer to the image below)
 2. Power on device
 3. Select programmer on Atmel Studio project properties
 4. Build solution (F7 by default)
+![Programmer to microcontroller connection](.github/programmer_microcontroller_connection.png)
