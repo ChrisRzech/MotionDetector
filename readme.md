@@ -18,4 +18,5 @@ Please refer to the schematic file under the `docs` directory.
 2. Power on device
 3. Select programmer on Atmel Studio project properties
 4. Build solution (F7 by default)
+
 ![Programmer to microcontroller connection](.github/programmer_microcontroller_connection.png)
